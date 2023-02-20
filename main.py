@@ -1,5 +1,5 @@
 
-#from tools.conway import *
+from tools.conway import *
 from tools.fileManager import *
 
 class coordinate:
