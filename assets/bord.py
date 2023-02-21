@@ -75,7 +75,7 @@ class Board():
     """
     def liveOn(self, cell):
         on = len(np.array(self.sub[cell[0]][cell[1]].nonzero()).transpose())
-        # print(on)
+        # print(self._boardNP[cell[0]+1, cell[1]+1])
         if(self._boardNP[cell[0]+1, cell[1]+1] == 1):
             on -= 1
         if(self._boardNP[cell[0]+1, cell[1]+1] == 1 and (on == 2 or on == 3)):
@@ -86,10 +86,11 @@ class Board():
             return False
         elif(self._boardNP[cell[0]+1, cell[1]+1] == 1 and (on > 3)):
             return False
-        elif(self._boardNP[cell[0]+1, cell[1]+1] == 0 and (on == 3)):
+        elif(self._boardNP[cell[0]+1, cell[1]+1] == 0 and (on == 3)):#check if its work
             return True
         else:
             return False
+
 
     def update(self):
         view = tuple(np.subtract(self._boardNP.shape, (3,3)) + 1)+(3,3) 
@@ -101,15 +102,29 @@ class Board():
         for x in range(self._width -1):
             for y in range(self._height-1):
                 if (self.liveOn([x,y])):
+                    if(self._boardNP[x+1, y+1] == 0):
+                        print(str(self._boardNP[x+1, y+1]) , " -- Alive Re -- ", str(self.countCells))
+                        self.reviveCell((x,y))
                     self._boardNP[x+1, y+1] = 1
                 else:
+                    if(self._boardNP[x+1, y+1] == 1):
+                        print(str(self._boardNP[x+1, y+1]) , " -- Alive Ki -- ", str(self.countCells))
+                        self.killCell((x,y))
                     self._boardNP[x+1, y+1] = 0
-                    self.killCell((x,y))
+        print(str(self.countCells) + " -- Alive")
+        xasas = input()
 
+    """
+        Getter for the Cells count
+    """
     @property
     def countCells(self):
         return self._cellOn
 
+
+    """
+        Updates the Console with the new values 
+    """
     def draw(self):
         for i in range(self._fps):
             #print(i)
@@ -119,8 +134,11 @@ class Board():
                 print(row)
             print("\n")
             print(self.countCells)
-            time.sleep(2)
-
+            time.sleep(0.2)
+    """
+        This kills all the cells that value is 0
+        Subtract from the live cell count
+    """
     def killCell(self, cell):
         #print(cell)
         #print(self._aliveValues)
@@ -128,3 +146,6 @@ class Board():
             self._aliveValues.remove(cell)
             self._cellOn -= 1
 
+    def reviveCell(self, cell):
+        self._aliveValues.append(cell)
+        self._cellOn += 1

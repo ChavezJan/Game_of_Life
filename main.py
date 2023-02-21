@@ -20,6 +20,7 @@ def main()-> None:
     board = Board(maxX,maxY, fps)
 
     board.aliveValues = coordinates
+    print(board.countCells)
 
     x = input()
 

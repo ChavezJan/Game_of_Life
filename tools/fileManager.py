@@ -14,7 +14,7 @@ from main import coordinate
 
 def fileReader(maxX,maxY,fps,coordinates):
 
-    inputPath = "/Users/chavez/Documents/UP/Semestre 11/Simulacion Grafica/Parcial 1/GoL/Config/inputs/input4.txt"
+    inputPath = "/Users/chavez/Documents/UP/Semestre 11/Simulacion Grafica/Parcial 1/GoL/Config/inputs/input2.txt"
 
     fileR = open(inputPath,"r")
     fileR = fileR.read().split("\n")
