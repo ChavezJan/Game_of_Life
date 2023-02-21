@@ -54,17 +54,18 @@ def main():
     # populate grid with random on/off - more off than on
     grid = randomGrid(N)
     # Uncomment lines to see the "glider" demo
-    #grid = np.zeros(N*N).reshape(N, N)
-    #addGlider(1, 1, grid)
+    grid = np.zeros(N*N).reshape(N, N)
+    addGlider(1, 1, grid)
 
     # set up animation
     fig, ax = plt.subplots()
     img = ax.imshow(grid, interpolation='nearest')
-    ani = animation.FuncAnimation(fig, update, fargs=(img, grid, N, ),
-                                  frames = 10,
+    ani = animation.FuncAnimation(fig, update, fargs=(img, grid, N ),
+                                  frames = 200,
                                   interval=updateInterval,
                                   save_count=50)
 
+    ani.save('test.gif',writer='ffmpeg',fps=60)
     plt.show()
 
 # call main
