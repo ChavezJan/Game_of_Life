@@ -5,17 +5,28 @@
 import os
 from main import coordinate
 
+
 """
     Reads and organize the:
     Max - x,y
     fps
     coordinates
 """
+def inputManager(e,expected):
+    try:
+        if(e in expected):
+            return e
+    except:
+        print("ERROR: The input is different")
+        print("File number 7")
+    return "7"
 
 def fileReader(maxX,maxY,fps,coordinates):
 
-    inputPath = "/Users/chavez/Documents/UP/Semestre 11/Simulacion Grafica/Parcial 1/GoL/Config/inputs/input2.txt"
-
+    print("Enter the file to test:\n1) input1\n2) input2\n3) input3\n4) input4\n5) input5\n6) input6")
+    inputFile = str(inputManager((input()),("1","2","3","4","5","6","7")))
+    inputPath = "/Users/chavez/Documents/UP/Semestre 11/Simulacion Grafica/Parcial1/GoL/Config/inputs/input"+inputFile+".txt"
+    #print(inputPath)
     fileR = open(inputPath,"r")
     fileR = fileR.read().split("\n")
     lineCont = 0

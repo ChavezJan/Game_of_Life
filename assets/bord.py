@@ -6,12 +6,14 @@ import os
 import numpy as np
 from copy import deepcopy
 import time
+#import generateFile as GF
+from . import generateFile as GF
+from . import patterns as PT
 # from GoL.Config.rules import *
 
 
 
 class Board():
-        
     def __init__(self, width, height, fps):
         self._width = width+1
         self._height = height+1
@@ -19,6 +21,35 @@ class Board():
         self._aliveValues = []
         self._cellOn = 0
         self._fps = fps
+        self._block = 0
+        self._beehive = 0
+        self._loaf = 0
+        self._boat = 0
+        self._tub = 0
+        self._blinker = 0
+        self._toad = 0
+        self._beacon = 0
+        self._glinder = 0
+        self._lgShip = 0
+        
+
+    def restartCount(self):
+        self._block = 0
+        self._beehive = 0
+        self._loaf = 0
+        self._boat = 0
+        self._tub = 0
+        self._blinker = 0
+        self._toad = 0
+        self._beacon = 0
+        self._glinder = 0
+        self._lgShip = 0
+    
+
+    def getPatt(self):
+        return [self._block,self._beehive,self._loaf,self._boat,self._tub,self._blinker,self._toad,self._beacon,self._glinder,self._lgShip]
+    
+
 
     def __str__(self) -> str:
         return str(self._boardNP)
@@ -70,12 +101,15 @@ class Board():
         print("\n")
 
 
+    
     """
-        Check rules
+        Check Rules
     """
-    def liveOn(self, cell):
-        on = len(np.array(self.sub[cell[0]][cell[1]].nonzero()).transpose())
-        # print(self._boardNP[cell[0]+1, cell[1]+1])
+    def liveOnNS(self,cell):
+        on = self._boardNP[cell[0],cell[1]] + self._boardNP[cell[0],cell[1] +1] +self._boardNP[cell[0],cell[1]+2]
+        on += self._boardNP[cell[0]+1,cell[1]] + self._boardNP[cell[0]+1,cell[1] +1] +self._boardNP[cell[0]+1,cell[1]+2]
+        on += self._boardNP[cell[0]+2,cell[1]] + self._boardNP[cell[0]+2,cell[1] +1] +self._boardNP[cell[0]+2,cell[1]+2]
+        #print("ON NS -----:" + str(on))   
         if(self._boardNP[cell[0]+1, cell[1]+1] == 1):
             on -= 1
         if(self._boardNP[cell[0]+1, cell[1]+1] == 1 and (on == 2 or on == 3)):
@@ -91,28 +125,35 @@ class Board():
         else:
             return False
 
-
-    def update(self):
-        view = tuple(np.subtract(self._boardNP.shape, (3,3)) + 1)+(3,3) 
-        stride= self._boardNP.strides + self._boardNP.strides
-        self.sub = np.lib.stride_tricks.as_strided(self._boardNP, view,stride)
-
+    def update(self,i):
+        types = ["block","beehive","loaf","boat","tub","blinker","toad","beacon","glinder","lgShip"]
+        
+        self._blinker += 1
+        print(self._blinker)
+        self.restartCount()
+        print(self._blinker)
         boardState = deepcopy(self._boardNP)
 
         for x in range(self._width -1):
             for y in range(self._height-1):
-                if (self.liveOn([x,y])):
+                if (self.liveOnNS([x,y])):
                     if(self._boardNP[x+1, y+1] == 0):
-                        print(str(self._boardNP[x+1, y+1]) , " -- Alive Re -- ", str(self.countCells))
+                       # print(str(self._boardNP[x+1, y+1]) , " -- Alive Re -- ", str(self.countCells))
                         self.reviveCell((x,y))
-                    self._boardNP[x+1, y+1] = 1
+                    boardState[x+1, y+1] = 1
                 else:
                     if(self._boardNP[x+1, y+1] == 1):
-                        print(str(self._boardNP[x+1, y+1]) , " -- Alive Ki -- ", str(self.countCells))
+                        #print(str(self._boardNP[x+1, y+1]) , " -- Alive Ki -- ", str(self.countCells))
                         self.killCell((x,y))
-                    self._boardNP[x+1, y+1] = 0
-        print(str(self.countCells) + " -- Alive")
-        xasas = input()
+                    boardState[x+1, y+1] = 0
+
+        self._boardNP = deepcopy(boardState)
+        #check status for the report
+        patternsCount = self.getPatt()
+        GF.generateReportToW(i,patternsCount)
+        
+       #print(str(self.countCells) + " -- Alive")
+        #xasas = input()
 
     """
         Getter for the Cells count
@@ -121,27 +162,24 @@ class Board():
     def countCells(self):
         return self._cellOn
 
-
     """
         Updates the Console with the new values 
     """
-    def draw(self):
+    def draw(self,sleepTime):
         for i in range(self._fps):
             #print(i)
             os.system("clear")
-            self.update()
+            self.update(i)
             for row in self._boardNP:
                 print(row)
             print("\n")
             print(self.countCells)
-            time.sleep(0.2)
+            time.sleep(sleepTime)
     """
         This kills all the cells that value is 0
         Subtract from the live cell count
     """
     def killCell(self, cell):
-        #print(cell)
-        #print(self._aliveValues)
         if(cell in self._aliveValues):
             self._aliveValues.remove(cell)
             self._cellOn -= 1

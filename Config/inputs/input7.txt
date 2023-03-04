@@ -1,0 +1,5 @@
+3 3     #Width Height
+10         # Generations
+1 0
+1 2
+1 1
