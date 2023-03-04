@@ -5,6 +5,7 @@
 """
     Write the new text without Space's
 """
+import time
 def fileWrite(text) -> None:
     file = open("Report.txt","a")
     text +="\n"
@@ -18,7 +19,7 @@ def generateReportToW(fps,patterns)-> None:
     total =1
     for i in patterns:
         total += i
-
+    # time.sleep(2)
     text = "|Iteration: " + str(fps+1) +" |\n"
     text += "−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−----"+"\n"
     text += "|               | Count |  Percent |"+"\n"

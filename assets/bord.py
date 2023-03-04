@@ -7,42 +7,10 @@ import numpy as np
 
 from copy import deepcopy
 import time
-#import generateFile as GF
+from multiprocessing import Pool,Process 
 from . import generateFile as GF
 from . import patterns as PT
 # from GoL.Config.rules import *
-  
-# ["block","beehive","loaf",
-# "boat","tub","blinker","toad"
-# ,"beacon","glinder","lgShip"]
-#
-#
-
-
-boardP = np.zeros((1,1),dtype=int)
-# def checkPat(ty):
-#     print(ty)
-#     print(boardP)
-#     if ty == "block":
-#         PT.checkBlock(boardP)
-#     elif ty == "beehive":
-#         PT.checkBeehive(boardP)
-#     elif ty == "loaf":
-#         PT.checkLoaf(boardP)
-#     elif ty == "boat":
-#         PT.checkBoat(boardP)
-#     elif ty == "tub":
-#         PT.checkTub(boardP)
-#     elif ty == "blinker":
-#         PT.checkBlinker(boardP)
-#     elif ty == "toad":
-#         PT.checkToad(boardP)
-#     elif ty == "beacon":
-#         PT.checkBeacon(boardP)
-#     elif ty == "glinder":
-#         PT.checkGlinder(boardP)
-#     elif ty == "lgShip":
-#         PT.checkLGShip(boardP)
 
 
 class Board():
@@ -77,6 +45,20 @@ class Board():
         self._glinder = 0
         self._lgShip = 0
     
+      
+    def applyCount(self,count):
+        self._block = count[0]
+        self._beehive = count[1]
+        self._loaf = count[2]
+        self._boat = count[3]
+        self._tub = count[4]
+        self._blinker = count[5]
+        self._toad = count[6]
+        self._beacon = count[7]
+        self._glinder = count[8]
+        self._lgShip = count[9]
+
+
     def getBoard(self):
         return self._boardNP
 
@@ -158,19 +140,6 @@ class Board():
             return True
         else:
             return False
-  
-    def applyCount(self,count):
-        self._block = count[0]
-        self._beehive = count[1]
-        self._loaf = count[2]
-        self._boat = count[3]
-        self._tub = count[4]
-        self._blinker = count[5]
-        self._toad = count[6]
-        self._beacon = count[7]
-        self._glinder = count[8]
-        self._lgShip = count[9]
-
 
     def update(self,i):
         types = ["block","beehive","loaf","boat","tub","blinker","toad","beacon","glinder","lgShip"]
@@ -197,11 +166,13 @@ class Board():
         self._boardNP = deepcopy(boardState)
         #check status for the report
         
-        nPatterns = PT.checkPat(types,self._boardNP)
-        self.applyCount(nPatterns)
+        PT.checkPat(types,self._boardNP,i)
+        # p = Process(PT.checkPat,args=(types,self._boardNP,i,))
+        # p.start()
+        # p.join()
+        #Pool().apply_async(PT.checkPat,args=(types,self._boardNP,i))
 
-        patternsCount = self.getPatt()
-        GF.generateReportToW(i,patternsCount)
+
         
        #print(str(self.countCells) + " -- Alive")
         #xasas = input()

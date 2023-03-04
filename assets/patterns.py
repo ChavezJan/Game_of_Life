@@ -1,41 +1,27 @@
 import numpy as np
 from . import bord as BD
-from multiprocessing import Pool ,Process
+from multiprocessing import Pool 
 import os
 import time
+from . import generateFile as GF
 ON = 1
 
-def checkPat(typ,boardNP):
-    # print(typ)
-
-    # coreNum = os.cpu_count()
-    # nProcess = []
-    # if(len(typ) <= coreNum):
-    #     for ty in typ:
-    #         uProcess = Process(target=typesOfPattern,args=(ty,boardNP,))
-    #         nProcess.append(uProcess)
-    # print("Iniciando Paralelismo")
-    # for uProcess in nProcess:
-    #     uProcess.start()
-    # print("Terminando Paralelismo")
-    # for uProcess in nProcess:
-    #     uProcess.join()
-
+def checkPat(typ,boardNP,fps):
 
     tStart = time.time()
 
     with Pool() as pool:
         args = [(ty,boardNP)for ty in typ]
-        print(args)
         async_results = pool.starmap(switcher,args)
-        print(async_results)
+        pool.terminate()
 
     tEnd = time.time()
-    print("Time of Ex: " + str(tEnd-tStart))
+    print("Time of Ex: " + str(round(tEnd-tStart,2)) + " s")
 
     countPatOrder = []
     for i in typ:
         countPatOrder.append(0)
+
     for i in async_results:
         if i[1] == "block":
             countPatOrder[0]= i[0]
@@ -58,10 +44,11 @@ def checkPat(typ,boardNP):
         elif i[1] == "lgShip":
             countPatOrder[9]= i[0]
 
-    return countPatOrder
+    Pool().apply_async(GF.generateReportToW,args=(fps,countPatOrder))
+    #return countPatOrder
 
         
-    time.sleep(5)
+
     #    [print(ar.get()) for ar in async_results]
     
     
@@ -88,84 +75,93 @@ def switcher(ty,boardNP):
         return checkLGShip(boardNP),ty
 
 
-def checkBlock(boardNP):
-    x,y = np.shape(boardNP)
-   
-    print(x)
-    print(y)
-    return 0
-
-
-    # for i in range(0, x):
-    #     for j in range(0, y):
-    #             if(np.array_equal(grid[i:i+4, j:j+4] , block, equal_nan=True) ):
-    #                 countBlock+=1
-    
-def checkBeehive(board):
-    print("m")
-    return 1
-    
-
-def checkLoaf(board):
-    print("L")
-    return 2
-
-def checkBoat(board):
-    print("l")
-    return 3
-def checkTub(board):
-    print("l")
-    return 4
-
-def checkBlinker(board):
-    print("p")
-    return 5
-
-def checkToad(board):
-    print("o")
-    return 6
-
-def checkBeacon(board):
-    print("i")
-    return 7
-
-def checkGlinder(board):
-    print("s")
-    return 8
-
-def checkLGShip(board):
-    print(2)
-    return 9
 
 block = np.array([[0, 0, 0, 0],
                 [0, ON, ON, 0], 
                 [0, ON, ON, 0], 
                 [0, 0, 0, 0]])
-        
+
+def checkBlock(boardNP):
+    x,y = np.shape(boardNP)
+    count = 0
+
+    for i in range(x-4):
+        for j in range(y-4):
+            checkArray = boardNP[i:i+4,j:j+4]
+            # print(checkArray)
+            if (np.array_equal(checkArray,block)):
+                count += 1
+    return count
+    
 beehive = np.array([[0, 0, 0, 0, 0, 0],
                     [0, 0, ON, ON, 0, 0],
                     [0, ON, 0, 0, ON, 0],
                     [0, 0, ON, ON, 0, 0],
                     [0, 0, 0, 0, 0, 0]])
 
+def checkBeehive(boardNP):
+    x,y = np.shape(boardNP)
+    count = 0
+
+    for i in range(x-6):
+        for j in range(y-5):
+            checkArray = boardNP[i:i+5,j:j+6]
+            #print(checkArray)
+            if (np.array_equal(checkArray,beehive)):
+                count += 1
+    return count
+
 loaf = np.array([[0, 0, 0, 0, 0, 0],
-                    [0, 0, ON, ON, 0, 0],
-                    [0, ON, 0, 0, ON, 0],
-                    [0, 0, ON, 0, ON, 0],
-                    [0, 0,   0, ON,   0, 0],
-                    [0, 0, 0, 0, 0, 0]])
+                 [0, 0, ON, ON, 0, 0],
+                 [0, ON, 0, 0, ON, 0],
+                 [0, 0, ON, 0, ON, 0],
+                 [0, 0,   0, ON,   0, 0],
+                 [0, 0, 0, 0, 0, 0]])
+def checkLoaf(boardNP):
+    x,y = np.shape(boardNP)
+    count = 0
+
+    for i in range(x-6):
+        for j in range(y-6):
+            checkArray = boardNP[i:i+6,j:j+6]
+            #print(checkArray)
+            if (np.array_equal(checkArray,loaf)):
+                count += 1
+    return count
 
 boat = np.array([[0, 0, 0, 0, 0],
                     [0, ON, ON, 0, 0], 
                     [0, ON, 0, ON, 0], 
                     [0, 0, ON, 0, 0],
                     [0, 0, 0, 0, 0]])
+def checkBoat(boardNP):
+    x,y = np.shape(boardNP)
+    count = 0
+
+    for i in range(x-5):
+        for j in range(y-5):
+            checkArray = boardNP[i:i+5,j:j+5]
+            # print(checkArray)
+            if (np.array_equal(checkArray,boat)):
+                count += 1
+    return count
 
 tub = np.array([[0, 0, 0, 0, 0],
                 [0, 0, ON, 0, 0], 
                 [0, ON, 0, ON, 0], 
                 [0, 0, ON, 0, 0],
                 [0, 0, 0, 0, 0]])
+def checkTub(boardNP):
+    x,y = np.shape(boardNP)
+    count = 0
+
+    for i in range(x-5):
+        for j in range(y-5):
+            checkArray = boardNP[i:i+5,j:j+5]
+            # print(checkArray)
+            if (np.array_equal(checkArray,tub)):
+                count += 1
+    return count
 
 blinker1 = np.array([[0, 0, 0],
                     [0, ON, 0], 
@@ -176,6 +172,20 @@ blinker1 = np.array([[0, 0, 0],
 blinker2 = np.array([[0, 0, 0, 0, 0],
                     [0, ON, ON, ON, 0],
                     [0, 0, 0, 0, 0]])
+def checkBlinker(boardNP):
+    x,y = np.shape(boardNP)
+    count = 0
+
+    for i in range(x-3):
+        for j in range(y-5):
+            checkArray = boardNP[i:i+3,j:j+5]
+            if (np.array_equal(checkArray,blinker2)):
+                count += 1
+            checkArray = boardNP[j:j+5,i:i+3]
+            if (np.array_equal(checkArray,blinker1)):
+                count += 1
+            
+    return count
 
 toad1 = np.array([[0, 0, 0, 0, 0, 0],
                 [0, 0, 0, ON, 0, 0],
@@ -188,6 +198,20 @@ toad2 = np.array([[0, 0, 0, 0, 0, 0],
                 [0, 0, ON, ON, ON, 0],
                 [0, ON, ON, ON, 0, 0],
                 [0, 0, 0, 0, 0, 0]])
+def checkToad(boardNP):
+    x,y = np.shape(boardNP)
+    count = 0
+
+    for i in range(x-6):
+        for j in range(y-6):
+            checkArray = boardNP[i:i+6,j:j+6]
+            if (np.array_equal(checkArray,toad1)):
+                count += 1
+            checkArray = boardNP[j:j+4,i:i+6]
+            if (np.array_equal(checkArray,toad2)):
+                count += 1
+            
+    return count
 
 beacon1 = np.array([[0, 0, 0, 0, 0, 0],
                     [0, ON, ON, 0, 0, 0],
@@ -202,6 +226,19 @@ beacon2 = np.array([[0, 0, 0, 0, 0, 0],
                     [0, 0, 0, 0, ON, 0],
                     [0, 0, 0, ON, ON, 0],
                     [0, 0, 0, 0, 0, 0]])
+def checkBeacon(boardNP):
+    x,y = np.shape(boardNP)
+    count = 0
+
+    for i in range(x-6):
+        for j in range(y-6):
+            checkArray = boardNP[i:i+6,j:j+6]
+            if (np.array_equal(checkArray,beacon1)):
+                count += 1
+            elif (np.array_equal(checkArray,beacon2)):
+                count +=1
+            
+    return count
 
 glider1 = np.array([[0, 0, 0, 0, 0],
                     [0, 0, ON, 0, 0], 
@@ -226,6 +263,23 @@ glider4 = np.array([[0, 0, 0, 0, 0],
                     [0, 0, ON, ON, 0], 
                     [0, ON, ON, 0, 0],
                     [0, 0, 0, 0, 0]])
+def checkGlinder(boardNP):
+    x,y = np.shape(boardNP)
+    count = 0
+
+    for i in range(x-5):
+        for j in range(y-5):
+            checkArray = boardNP[i:i+5,j:j+5]
+            if (np.array_equal(checkArray,glider1)):
+                count += 1
+            elif (np.array_equal(checkArray,glider2)):
+                count +=1
+            elif (np.array_equal(checkArray,glider3)):
+                count +=1
+            elif (np.array_equal(checkArray,glider4)):
+                count +=1
+            
+    return count
 
 lws1 = np.array([[0, 0, 0, 0, 0, 0, 0],
                 [0, ON, 0, 0, ON, 0, 0], 
@@ -254,3 +308,24 @@ lws4 = np.array([[0, 0, 0, 0, 0, 0, 0],
                 [0, ON, ON, 0, ON, ON, 0],
                 [0, 0, 0, ON, ON, 0, 0],
                 [0, 0, 0, 0, 0, 0, 0]])
+def checkLGShip(boardNP):
+    x,y = np.shape(boardNP)
+    count = 0
+
+    for i in range(x-6):
+        for j in range(y-7):
+            checkArray = boardNP[i:i+6,j:j+7]
+            if (np.array_equal(checkArray,glider1)):
+                count += 1
+            elif (np.array_equal(checkArray,glider2)):
+                count +=1
+            elif (np.array_equal(checkArray,glider3)):
+                count +=1
+            elif (np.array_equal(checkArray,glider4)):
+                count +=1
+            
+    return count
+
+
+
+
