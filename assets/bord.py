@@ -179,13 +179,13 @@ class Board():
     """
     def draw(self,sleepTime):
         for i in range(self._fps):
-            os.system("clear")
             self.update(i)
+            os.system("clear")
             for row in self._boardNP:
                 print(row)
-            print("\n")
-            print(self.countCells)
-            time.sleep(sleepTime)
+            # print("\n")
+            # print(self.countCells)
+            time.sleep(0)
     """
         This kills all the cells that value is 0
         Subtract from the live cell count
