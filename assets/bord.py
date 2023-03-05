@@ -10,7 +10,7 @@ import time
 from multiprocessing import Pool,Process 
 from . import generateFile as GF
 from . import patterns as PT
-# from GoL.Config.rules import *
+
 
 
 class Board():
@@ -94,7 +94,7 @@ class Board():
     @property
     def aliveValues(self):
         return self._aliveValues                           #return all the positions
-        #return "Values Alive: %05d" % self.countValues()    #return the count of the values
+
 
     """
         Setter for the coordinates that are alive
@@ -125,7 +125,6 @@ class Board():
         on = self._boardNP[cell[0],cell[1]] + self._boardNP[cell[0],cell[1] +1] +self._boardNP[cell[0],cell[1]+2]
         on += self._boardNP[cell[0]+1,cell[1]] + self._boardNP[cell[0]+1,cell[1] +1] +self._boardNP[cell[0]+1,cell[1]+2]
         on += self._boardNP[cell[0]+2,cell[1]] + self._boardNP[cell[0]+2,cell[1] +1] +self._boardNP[cell[0]+2,cell[1]+2]
-        #print("ON NS -----:" + str(on))   
         if(self._boardNP[cell[0]+1, cell[1]+1] == 1):
             on -= 1
         if(self._boardNP[cell[0]+1, cell[1]+1] == 1 and (on == 2 or on == 3)):
@@ -145,21 +144,17 @@ class Board():
         types = ["block","beehive","loaf","boat","tub","blinker","toad","beacon","glinder","lgShip"]
         numbers = [2,3,5]
         self._blinker += 1
-        # print(self._blinker)
         self.restartCount()
-        # print(self._blinker)
         boardState = deepcopy(self._boardNP)
 
         for x in range(self._width -1):
             for y in range(self._height-1):
                 if (self.liveOnNS([x,y])):
                     if(self._boardNP[x+1, y+1] == 0):
-                       # print(str(self._boardNP[x+1, y+1]) , " -- Alive Re -- ", str(self.countCells))
                         self.reviveCell((x,y))
                     boardState[x+1, y+1] = 1
                 else:
                     if(self._boardNP[x+1, y+1] == 1):
-                        #print(str(self._boardNP[x+1, y+1]) , " -- Alive Ki -- ", str(self.countCells))
                         self.killCell((x,y))
                     boardState[x+1, y+1] = 0
 
@@ -167,15 +162,10 @@ class Board():
         #check status for the report
         
         PT.checkPat(types,self._boardNP,i)
-        # p = Process(PT.checkPat,args=(types,self._boardNP,i,))
-        # p.start()
-        # p.join()
-        #Pool().apply_async(PT.checkPat,args=(types,self._boardNP,i))
-
+        
 
         
-       #print(str(self.countCells) + " -- Alive")
-        #xasas = input()
+       
 
     """
         Getter for the Cells count
@@ -189,7 +179,6 @@ class Board():
     """
     def draw(self,sleepTime):
         for i in range(self._fps):
-            #print(i)
             os.system("clear")
             self.update(i)
             for row in self._boardNP:

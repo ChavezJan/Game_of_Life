@@ -32,10 +32,11 @@ def main()-> None:
     try:
         sleepTime = float(input())
     except:
-        sleepTime = 2.0
+        sleepTime = 1.0
 
     board.draw(sleepTime)
-    time.sleep(5)
+    time.sleep(4)
+
 
     
 # call main
