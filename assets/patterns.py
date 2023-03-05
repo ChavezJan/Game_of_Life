@@ -1,8 +1,8 @@
 import numpy as np
 from . import bord as BD
 from multiprocessing import Pool
-
 from . import generateFile as GF
+
 ON = 1
 
 def checkPat(typ,boardNP,fps):
