@@ -1,6 +1,6 @@
 import numpy as np
 from . import bord as BD
-from multiprocessing import Pool 
+from multiprocessing import Pool, Process,Manager
 import os
 import time
 from . import generateFile as GF
@@ -9,20 +9,41 @@ ON = 1
 def checkPat(typ,boardNP,fps):
 
     tStart = time.time()
-
     with Pool() as pool:
         args = [(ty,boardNP)for ty in typ]
-        async_results = pool.starmap(switcher,args)
+        manager2 = Manager()
+        return_dict2 = 0
+        async_results = pool.starmap(switcher,args,return_dict2)
         pool.terminate()
-
     tEnd = time.time()
-    print("Time of Ex: " + str(round(tEnd-tStart,2)) + " s")
+    print("Time of Ex on POOL: " + str(round(tEnd-tStart,2)) + " s")
+    tStart = time.time()
+    manager = Manager()
+    return_dict = manager.dict()
+    nProcess =[]
+    for i in typ:
+        uProcess = Process(target=switcher,args=(i,boardNP,return_dict,))
+        nProcess.append(uProcess)
+        uProcess.start()
+
+    for uProcess in nProcess:
+
+        uProcess.join()
+        # [(0, 'beehive'),
+        #  (0, 'block'), 
+        # (0, 'glinder'), (0, 'boat'), (0, 'blinker'), (1, 'toad'), (0, 'beacon'), (0, 'tub'), (0, 'loaf'), (0, 'lgShip')]
+
+    async_Process = return_dict.values()
+    tEnd = time.time()
+    print("Time of Ex on Process: " + str(round(tEnd-tStart,2)) + " s")
+    time.sleep(2)
 
     countPatOrder = []
     for i in typ:
         countPatOrder.append(0)
 
-    for i in async_results:
+    for i in async_Process:
+        #print(i)
         if i[1] == "block":
             countPatOrder[0]= i[0]
         elif i[1] == "beehive":
@@ -52,26 +73,36 @@ def checkPat(typ,boardNP,fps):
     #    [print(ar.get()) for ar in async_results]
     
     
-def switcher(ty,boardNP):
+def switcher(ty,boardNP,return_dict):
     if ty == "block":
+        return_dict[ty] = checkBlock(boardNP),ty
         return checkBlock(boardNP),ty
     elif ty == "beehive":
+        return_dict[ty] = checkBeehive(boardNP),ty
         return checkBeehive(boardNP),ty
     elif ty == "loaf":
+        return_dict[ty] = checkLoaf(boardNP),ty
         return checkLoaf(boardNP),ty
     elif ty == "boat":
+        return_dict[ty] = checkBoat(boardNP),ty
         return checkBoat(boardNP),ty
     elif ty == "tub":
+        return_dict[ty] = checkTub(boardNP),ty
         return checkTub(boardNP),ty
     elif ty == "blinker":
+        return_dict[ty] = checkBlinker(boardNP),ty
         return checkBlinker(boardNP),ty
     elif ty == "toad":
+        return_dict[ty] = checkToad(boardNP),ty
         return checkToad(boardNP),ty
     elif ty == "beacon":
+        return_dict[ty] = checkBeacon(boardNP),ty
         return checkBeacon(boardNP),ty
     elif ty == "glinder":
+        return_dict[ty] = checkGlinder(boardNP),ty
         return checkGlinder(boardNP),ty
     elif ty == "lgShip":
+        return_dict[ty] = checkLGShip(boardNP),ty
         return checkLGShip(boardNP),ty
 
 
@@ -93,12 +124,18 @@ def checkBlock(boardNP):
                 count += 1
     return count
     
-beehive = np.array([[0, 0, 0, 0, 0, 0],
+beehive1 = np.array([[0, 0, 0, 0, 0, 0],
                     [0, 0, ON, ON, 0, 0],
                     [0, ON, 0, 0, ON, 0],
                     [0, 0, ON, ON, 0, 0],
                     [0, 0, 0, 0, 0, 0]])
-
+beehive2 = np.array([
+                    [0, 0, 0, 0, 0],
+                    [0, 0, ON, 0, 0],
+                    [0, ON, 0, ON, 0],
+                    [0, ON, 0, ON, 0],
+                    [0, 0,  ON, 0, 0],
+                    [0, 0, 0, 0, 0]])
 def checkBeehive(boardNP):
     x,y = np.shape(boardNP)
     count = 0
@@ -106,8 +143,10 @@ def checkBeehive(boardNP):
     for i in range(x-6):
         for j in range(y-5):
             checkArray = boardNP[i:i+5,j:j+6]
-            #print(checkArray)
-            if (np.array_equal(checkArray,beehive)):
+            if (np.array_equal(checkArray,beehive1)):
+                count += 1
+            checkArray = boardNP[j:j+6,i:i+5]
+            if (np.array_equal(checkArray,beehive2)):
                 count += 1
     return count
 

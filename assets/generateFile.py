@@ -16,9 +16,11 @@ def fileWrite(text) -> None:
     Generate Report
 """
 def generateReportToW(fps,patterns)-> None:
-    total =1
+    total =0
     for i in patterns:
         total += i
+    if(total == 0):
+        total +=1
     # time.sleep(2)
     text = "|Iteration: " + str(fps+1) +" |\n"
     text += "−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−----"+"\n"

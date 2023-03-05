@@ -10,6 +10,7 @@ from tools.outputManager import *
 
 
 
+
 def main()-> None:
 
     
@@ -34,8 +35,12 @@ def main()-> None:
         sleepTime = 2.0
 
     board.draw(sleepTime)
+    time.sleep(5)
 
     
 # call main
 if __name__ == '__main__':
+    tStart = time.time()
     main()
+    tEnd = time.time()
+    print("the simultion took: " +str(round(tEnd-tStart,2)))
