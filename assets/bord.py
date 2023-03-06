@@ -10,6 +10,7 @@ import time
 from multiprocessing import Pool,Process 
 from . import generateFile as GF
 from . import patterns as PT
+import platform
 
 
 
@@ -178,13 +179,17 @@ class Board():
         Updates the Console with the new values 
     """
     def draw(self,sleepTime):
+        print(platform.system())
+        time.sleep(10)
         for i in range(self._fps):
             self.update(i)
-            os.system("clear")
+            if(platform.system() == "Darwin"):
+                os.system("clear")
+            else:
+                os.system("cls")
             for row in self._boardNP:
-                print(row)
-            # print("\n")
-            # print(self.countCells)
+                      print(row)
+           
             time.sleep(0)
     """
         This kills all the cells that value is 0

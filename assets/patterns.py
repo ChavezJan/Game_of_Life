@@ -1,3 +1,7 @@
+"""
+    Name: Jorge Alejandro Chavez Nuñez
+    ID: 0199414
+"""
 import numpy as np
 from . import bord as BD
 from multiprocessing import Pool

@@ -26,7 +26,7 @@ def fileReader(maxX,maxY,fps,coordinates):
     print("Enter the file to test:\n1) input1\n2) input2\n3) input3\n4) input4\n5) input5\n6) input6")
     inputFile = str(inputManager((input()),("1","2","3","4","5","6","7")))
     inputPath = "./config/inputs/input"+inputFile+".txt"
-    #print(inputPath)
+
     fileR = open(inputPath,"r")
     fileR = fileR.read().split("\n")
     lineCont = 0
