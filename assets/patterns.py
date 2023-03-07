@@ -4,7 +4,7 @@
 """
 import numpy as np
 from . import bord as BD
-from multiprocessing import Pool
+from multiprocessing import Pool, Process
 from . import generateFile as GF
 
 ON = 1
@@ -12,10 +12,12 @@ ON = 1
 def checkPat(typ,boardNP,fps):
 
 
-    with Pool() as pool:
+    with Pool(10) as pool:
         args = [(ty,boardNP)for ty in typ]
         async_results = pool.starmap(switcher,args)
         pool.terminate()
+    
+        
 
     countPatOrder = []
     for i in typ:

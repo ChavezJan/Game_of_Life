@@ -180,7 +180,7 @@ class Board():
     """
     def draw(self,sleepTime):
         print(platform.system())
-        time.sleep(10)
+        # time.sleep(10)
         for i in range(self._fps):
             self.update(i)
             if(platform.system() == "Darwin"):
